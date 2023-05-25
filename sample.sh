@@ -15,7 +15,7 @@ fi
 # Check if Ruby is already installed
 if command -v ruby >/dev/null 2>&1; then
 	echo "Ruby found in the system"
-elif snap run ruby --version >/dev/null 2>&1; then
+else
 		echo "Ruby not found! Installing..."
     	if $is_linux; then
     	  apt-get install ruby-full
