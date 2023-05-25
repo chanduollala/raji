@@ -27,6 +27,8 @@ fi
 if $is_linux; then
   echo "Installing simplydo"
   sudo wget -O /usr/bin/simplydo https://raw.githubusercontent.com/chanduollala/simplydo/main/simplydo
+  sudo chmod +x /usr/bin/simplydo
+
 else
   echo "platform not supported"
 fi
