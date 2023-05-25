@@ -18,7 +18,7 @@ if command -v ruby >/dev/null 2>&1; then
 else
   echo "Ruby not found! Installing..."
     if $is_linux; then
-      apt-get install ruby-full
+      sudo apt-get install ruby-full
     fi
 fi
 
