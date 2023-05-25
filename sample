@@ -19,6 +19,15 @@ else
   echo "Ruby not found! Installing..."
     if $is_linux; then
       sudo apt-get install ruby-full
+    elif $is_macos; then
+      brew install ruby
     fi
+fi
+
+if $is_linux; then
+  echo "Installing simplydo"
+  sudo wget -O /usr/bin/simplydo https://raw.githubusercontent.com/chanduollala/simplydo/main/simplydo
+else
+  echo "platform not supported"
 fi
 
