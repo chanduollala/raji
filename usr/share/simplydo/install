@@ -1,0 +1,37 @@
+#!/bin/bash
+
+platform=$(uname)
+is_linux=false
+is_macos=false
+if [[ "$platform" == "Linux" ]]; then
+  echo "Linux detected"
+  is_linux=true
+elif [[ "$platform" == "Darwin" ]]; then
+  echo "MacOS detected"
+  is_macos=true
+fi
+
+echo "Checking if ruby is installed in system"
+# Check if Ruby is already installed
+if command -v ruby >/dev/null 2>&1; then
+	echo "Ruby found in the system"
+else
+  echo "Ruby not found! Installing..."
+    if $is_linux; then
+      sudo apt-get install ruby-full
+    elif $is_macos; then
+      brew install ruby
+    fi
+fi
+
+if $is_linux; then
+  echo "Installing simplydo"
+  sudo wget -O /usr/bin/simplydo https://raw.githubusercontent.com/chanduollala/simplydo/main/simplydo
+  sudo chmod +x /usr/bin/simplydo
+
+else
+  echo "platform not supported"
+fi
+
+
+simplydo start

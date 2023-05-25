@@ -1,0 +1,87 @@
+#!/bin/bash
+
+print_options() {
+
+    local selected_option=$1
+    shift
+    local options=("$@")
+    local i=1
+    for option in "${options[@]}"; do
+        if [ $i -eq $selected_option ]; then
+            echo "=> ${option}"
+        else
+            echo "   ${option}"
+        fi
+        ((i++))
+    done
+}
+
+kill_server() {
+  # Find the process ID (PID) of the server.rb process
+  server_pid=$(pgrep -f server.rb)
+
+  # Check if the process is running
+  if [ -n "$server_pid" ]; then
+    # Kill the process
+    sudo kill -9 "$server_pid"
+    echo "Server process already running as (PID: $server_pid) has been terminated."
+  fi
+}
+
+if [ "$1" = "start" ]; then
+
+    if command -v ruby >/dev/null 2>&1; then
+      kill_server
+      ruby /usr/share/simplydo/server.rb > /dev/null &
+      # Wait for the server process to start
+      sleep 1
+      # Check if the server process is running
+      if pgrep -f "server.rb" >/dev/null; then
+          echo "Server started successfully"
+      else
+          echo "Failed to start the server"
+      fi
+
+    else
+        echo "Ruby not installed. Failed to start the server"
+        echo "Exiting..."
+        exit 1
+    fi
+
+
+
+
+
+elif [ "$1" = "stop" ]; then
+    kill_server
+elif [ "$1" = "create" ] || [ "$1" = "c" ]; then
+  frontend_options=("Angular" "React" "Vue" "Flutter" "Express JS" "RubyOnRails" "I don't have frontend included in my project")
+  echo "Select frontend framework(s) for the project (use arrow keys to navigate, press space to select/deselect, and press enter to proceed):"
+
+  # Set initial selected option and current option
+  selected_option=1
+  current_option=1
+  while true; do
+    tput civis  # Hide cursor
+    print_options $selected_option "${frontend_options[@]}"
+    read -rsn1 -d ' ' input
+    echo "input is $input"
+    if [ "$input" == $'\x1b' ]; then
+      echo "esc"
+        read -rsn2 -t 0.1 key
+        if [[ $key == "[A" ]] && [ $selected_option -gt 1 ]; then
+          echo "up"
+
+        elif [[ $key == "[B" ]] && [ $selected_option -lt ${#frontend_options[@]} ]; then
+          echo "down"
+
+        fi
+    elif [[ $input == "" ]]; then
+      echo "space"
+    fi
+  done
+
+else
+    echo "Invalid command. Usage: simplydo [start|stop|create]"
+fi
+
