@@ -1,0 +1,15 @@
+#!/bin/bash
+
+INSTALL_DIR="/usr/bin"
+
+#echo "Copying 'simplydo' script..."
+#cp simplydo "$INSTALL_DIR"
+
+# Set the execute permissions for the 'simplydo' script
+echo "Setting execute permissions..."
+chmod +x "$INSTALL_DIR/simplydo"
+
+
+echo "Installation complete."
+echo "Starting server"
+sudo simplydo start

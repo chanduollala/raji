@@ -1,0 +1,5 @@
+Package: simplydo
+Version: 1.0
+Maintainer: Chandrashekar Ollala chandudeveloper20@gmail.com
+Architecture: all
+Description: This tool enables the user to manage their servers from their mobile, and get insights about the charge of the hosting machine.
