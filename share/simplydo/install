@@ -54,7 +54,7 @@ elif $is_macos; then
   sudo curl -L -o /usr/local/simplydo.zip https://github.com/chanduollala/simplydo/archive/main.zip
 
   # Extract the contents of the ZIP archive
-  sudo unzip /usr/local/simplydo.zip -d /usr/local/simplydo
+  sudo unzip /usr/local/simplydo.zip -d /usr/local
 
   # Rename the extracted directory
   sudo mv /usr/local/simplydo-main /usr/local/simplydo
