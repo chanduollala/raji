@@ -29,9 +29,44 @@ if $is_linux; then
   sudo wget -O /usr/bin/simplydo https://raw.githubusercontent.com/chanduollala/simplydo/main/simplydo
   sudo chmod +x /usr/bin/simplydo
 
+elif $is_macos; then
+  echo "Installing simplydo"
+
+  SHELL_CONFIG_FILE=""
+
+  # Check the default shell
+  if [[ "$SHELL" == "/bin/bash" ]]; then
+    SHELL_CONFIG_FILE="$HOME/.bash_profile"
+  elif [[ "$SHELL" == "/bin/zsh" ]]; then
+    SHELL_CONFIG_FILE="$HOME/.zshrc"
+  elif [[ "$SHELL" == "/bin/sh" ]]; then
+    SHELL_CONFIG_FILE="$HOME/.profile"
+  else
+    echo "Unsupported shell: $SHELL"
+    exit 1
+  fi
+
+  # Create /usr/local/bin directory if it doesn't exist
+  sudo mkdir -p /usr/local/bin
+
+  sudo -s
+  csrutil authenticated-root disable
+
+  # Download simplydo and make it executable
+  sudo curl -o /usr/bin/simplydo https://raw.githubusercontent.com/chanduollala/simplydo/main/simplydo
+  sudo chmod +x /usr/bin/simplydo
+
+  # Add /usr/local/bin to the PATH in the appropriate shell config file
+  echo 'export PATH="/usr/local/bin:$PATH"' >> "$SHELL_CONFIG_FILE"
+
+  # Source the shell config file to apply changes
+  source "$SHELL_CONFIG_FILE"
+
+
 else
   echo "platform not supported"
 fi
 
 
 simplydo start
+exit

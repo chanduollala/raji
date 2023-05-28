@@ -1,17 +1,18 @@
-#!/bin/bash
+# Define a function that modifies the passed array
+modify_array() {
+  local array_name=$1
+  local new_values=("Modified" "Array")
 
-# Enable reading of single keypresses
-read -rsn1 -d ' ' input
+  # Create the command to modify the array using eval
+  eval "${array_name}=(\"\${new_values[@]}\")"
+}
 
-# Check if the pressed key is an arrow key
-if [[ $key == $'\x1b[A' ]]; then
-  echo "Up arrow key pressed"
-elif [[ $key == $'\x1b[B' ]]; then
-  echo "Down arrow key pressed"
-elif [[ $key == $'\x1b[C' ]]; then
-  echo "Right arrow key pressed"
-elif [[ $key == $'\x1b[D' ]]; then
-  echo "Left arrow key pressed"
-else
-  echo "Key press not recognized"
-fi
+# Create an array
+my_array=("Original" "Values")
+
+echo "Before modification: ${my_array[@]}"
+
+# Call the function and pass the array variable name
+modify_array "my_array"
+
+echo "After modification: ${my_array[@]}"

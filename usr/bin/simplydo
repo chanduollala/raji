@@ -2,18 +2,74 @@
 
 print_options() {
 
+  local checked="\xE2\x98\x91"
+
     local selected_option=$1
     shift
     local options=("$@")
     local i=1
     for option in "${options[@]}"; do
         if [ $i -eq $selected_option ]; then
+            echo -ne -e "\xE2\x9C\x93"
             echo "=> ${option}"
         else
-            echo "   ${option}"
+            echo "    ${option}"
         fi
         ((i++))
     done
+
+
+
+}
+
+multi_select(){
+
+  local selections_arr=$1
+  local selections=()
+  shift
+  local options=("$@")
+  # Initialize the selected state of options
+  for ((i = 0; i < ${#options[@]}; i++)); do
+    selected[$i]=0
+  done
+  # Set initial selected option and current option
+  selected_option=1
+  current_option=1
+  while true; do
+    tput civis  # Hide cursor
+    print_options $selected_option "${options[@]}"
+    IFS= read -rsn1 input
+    if [ "$input" == $'\x1b' ]; then
+        read -rsn2 key
+        if [[ $key == "[A" ]] && [ $selected_option -gt 1 ]; then
+          ((selected_option--))
+          ((current_option--))
+        elif [[ $key == "[B" ]] && [ $selected_option -lt ${#options[@]} ]; then
+          ((selected_option++))
+          ((current_option++))
+        fi
+    elif [[ $input == " " ]]; then
+      # Space key to select/deselect option
+      		if [ "${selected[$selected_option-1]}" == 1 ]; then
+      		  selected[$selected_option-1]=0
+      		else
+      		  selected[$selected_option-1]=1
+      		fi
+
+    elif [[ $input == '' ]]; then
+      break
+    fi
+    echo -ne "\033[${#options[@]}A"
+  done
+
+# Collect the selected frontend options
+	for ((i = 0; i < ${#options[@]}; i++)); do
+	  if [ "${selected[$i]}" == 1 ]; then
+		selections+=("${options[$i]}")
+	  fi
+	done
+
+  eval "${selections_arr}=(\"\${selections[@]}\")"
 }
 
 kill_server() {
@@ -30,6 +86,7 @@ kill_server() {
 
 if [ "$1" = "start" ]; then
 
+    selected_frontends=()
     if command -v ruby >/dev/null 2>&1; then
       kill_server
       ruby /usr/share/simplydo/server.rb > /dev/null &
@@ -48,40 +105,19 @@ if [ "$1" = "start" ]; then
         exit 1
     fi
 
-
-
-
-
 elif [ "$1" = "stop" ]; then
     kill_server
+
 elif [ "$1" = "create" ] || [ "$1" = "c" ]; then
-  frontend_options=("Angular" "React" "Vue" "Flutter" "Express JS" "RubyOnRails" "I don't have frontend included in my project")
+  frontend_options=("Angular" "React" "Vue" "Flutter" "Express JS" "RubyOnRails")
   echo "Select frontend framework(s) for the project (use arrow keys to navigate, press space to select/deselect, and press enter to proceed):"
-
-  # Set initial selected option and current option
-  selected_option=1
-  current_option=1
-  while true; do
-    tput civis  # Hide cursor
-    print_options $selected_option "${frontend_options[@]}"
-    read -rsn1 -d ' ' input
-    echo "input is $input"
-    if [ "$input" == $'\x1b' ]; then
-      echo "esc"
-        read -rsn2 -t 0.1 key
-        if [[ $key == "[A" ]] && [ $selected_option -gt 1 ]; then
-          echo "up"
-
-        elif [[ $key == "[B" ]] && [ $selected_option -lt ${#frontend_options[@]} ]; then
-          echo "down"
-
-        fi
-    elif [[ $input == "" ]]; then
-      echo "space"
-    fi
-  done
+  multi_select "selected_frontends" "${frontend_options[@]}"
+  echo "Selected Frontend Frameworks: ${selected_frontends[@]}"
 
 else
     echo "Invalid command. Usage: simplydo [start|stop|create]"
 fi
 
+
+
+exit 0
