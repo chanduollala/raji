@@ -49,11 +49,9 @@ elif $is_macos; then
   # Create /usr/local/bin directory if it doesn't exist
   sudo mkdir -p /usr/local/bin
 
-  sudo -s
-  csrutil authenticated-root disable
 
   # Download simplydo and make it executable
-  sudo curl -o /usr/local/bin/simplydo https://raw.githubusercontent.com/chanduollala/simplydo/main/simplydo
+  sudo curl -o /usr/local/bin/simplydo https://raw.githubusercontent.com/chanduollala/simplydo/main/usr/bin/simplydo
   sudo chmod +x /usr/local/bin/simplydo
 
   # Add /usr/local/bin to the PATH in the appropriate shell config file
@@ -67,6 +65,6 @@ else
   echo "platform not supported"
 fi
 
-
+echo "Starting Simplydo server"
 simplydo start
 exit
