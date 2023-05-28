@@ -53,8 +53,8 @@ elif $is_macos; then
   csrutil authenticated-root disable
 
   # Download simplydo and make it executable
-  sudo curl -o /usr/bin/simplydo https://raw.githubusercontent.com/chanduollala/simplydo/main/simplydo
-  sudo chmod +x /usr/bin/simplydo
+  sudo curl -o /usr/local/bin/simplydo https://raw.githubusercontent.com/chanduollala/simplydo/main/simplydo
+  sudo chmod +x /usr/local/bin/simplydo
 
   # Add /usr/local/bin to the PATH in the appropriate shell config file
   echo 'export PATH="/usr/local/bin:$PATH"' >> "$SHELL_CONFIG_FILE"
