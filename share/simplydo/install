@@ -46,16 +46,34 @@ elif $is_macos; then
     exit 1
   fi
 
-  # Create /usr/local/bin directory if it doesn't exist
-  sudo mkdir -p /usr/local/bin
+
+  # Create the /usr/local/simplydo directory
+  sudo mkdir -p /usr/local
+
+  # Download the simplydo ZIP archive from GitHub
+  sudo curl -L -o /usr/local/simplydo.zip https://github.com/chanduollala/simplydo/archive/main.zip
+
+  # Extract the contents of the ZIP archive
+  sudo unzip /usr/local/simplydo.zip -d /usr/local/simplydo
+
+  # Rename the extracted directory
+  sudo mv /usr/local/simplydo-main /usr/local/simplydo
+
+  # Change permissions of the simplydo directory
+  sudo chmod -R 755 /usr/local/simplydo
+
+  # Remove the ZIP archive
+  sudo rm /usr/local/simplydo.zip
 
 
-  # Download simplydo and make it executable
-  sudo curl -o /usr/local/bin/simplydo https://raw.githubusercontent.com/chanduollala/simplydo/main/usr/bin/simplydo
-  sudo chmod +x /usr/local/bin/simplydo
+
+
+
+  sudo chmod +x /usr/local/simplydo/bin/simplydo
+
 
   # Add /usr/local/bin to the PATH in the appropriate shell config file
-  echo 'export PATH="/usr/local/bin:$PATH"' >> "$SHELL_CONFIG_FILE"
+  echo 'export PATH="/usr/local/simplydo/bin:$PATH"' >> "$SHELL_CONFIG_FILE"
 
   # Source the shell config file to apply changes
   source "$SHELL_CONFIG_FILE"
