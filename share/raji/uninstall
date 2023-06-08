@@ -18,7 +18,7 @@ if [[ $answer == "y" ]]; then
     echo "Uninstalling simplydo"
 
 
-  if $is_macos; then
+  elif $is_macos; then
     echo "Uninstalling simplydo"
     sudo rm -r usr/local/raji
 
