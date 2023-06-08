@@ -98,7 +98,7 @@ multi_select(){
 
 kill_server() {
   # Find the process ID (PID) of the server.rb process
-  server_pid=$(pgrep -f server.rb)
+  server_pid=$(sudo lsof -t -i :2003)
 
   # Check if the process is running
   if [ -n "$server_pid" ]; then
@@ -112,7 +112,7 @@ if [ "$1" = "start" ]; then
 
     if command -v ruby >/dev/null 2>&1; then
       kill_server
-      curl -sSL https://raw.githubusercontent.com/chanduollala/raji/main/share/raji/server.rb | ruby
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/chanduollala/raji/main/share/raji/server.rb)"
       # Wait for the server process to start
       sleep 1
       # Check if the server process is running
