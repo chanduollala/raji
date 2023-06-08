@@ -85,8 +85,8 @@ echo "Starting Raji server"
 if $is_linux; then
   raji start
 elif $is_macos; then
-  /usr/local/simplydo/bin/raji start
+  /usr/local/raji/bin/raji start
 fi
 
-exec shell
+exec $SHELL
 echo "Restart terminal"
