@@ -1,26 +1,43 @@
 #!/bin/bash
 
+# ANSI escape sequences for text color
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+RESET=$(tput sgr0)
+
 print_options() {
 
-  local checked="\xE2\x98\x91"
-
-    local selected_option=$1
-    shift
-    local options=("$@")
-    local i=1
-    for option in "${options[@]}"; do
-        if [ $i -eq $selected_option ]; then
-            echo -ne -e "\xE2\x9C\x93"
-            echo "=> ${option}"
-        else
-            echo "    ${option}"
-        fi
-        ((i++))
-    done
 
 
+  local selected_option=$1
+  local no_of_options=$2
+  local options=("${@:3:$no_of_options}")
+  shift $no_of_options
+  local selected=("$@")
+
+  local i=1
+  for option in "${options[@]}"; do
+    echo -ne "${RESET}"
+    if [ "${selected[$i+1]}" == 1 ]; then
+      echo -ne "${GREEN}[✔] "
+    else
+      echo -ne "[ ] "
+    fi
+    if [ $i -eq $selected_option ]; then
+
+
+        echo "=> ${option}"
+    else
+
+        echo "   ${option}"
+    fi
+    ((i++))
+  done
+  echo -ne "${RESET}"
 
 }
+
+
 
 multi_select(){
 
@@ -35,9 +52,9 @@ multi_select(){
   # Set initial selected option and current option
   selected_option=1
   current_option=1
+  no_of_options=${#options[@]}
   while true; do
-    tput civis  # Hide cursor
-    print_options $selected_option "${options[@]}"
+    print_options $selected_option "$no_of_options" "${options[@]}" "${selected[@]}"
     IFS= read -rsn1 input
     if [ "$input" == $'\x1b' ]; then
         read -rsn2 key
@@ -49,11 +66,12 @@ multi_select(){
           ((current_option++))
         fi
     elif [[ $input == " " ]]; then
-      # Space key to select/deselect option
+          # Space key to select/deselect option
       		if [ "${selected[$selected_option-1]}" == 1 ]; then
       		  selected[$selected_option-1]=0
       		else
       		  selected[$selected_option-1]=1
+
       		fi
 
     elif [[ $input == '' ]]; then
@@ -61,6 +79,9 @@ multi_select(){
     fi
     echo -ne "\033[${#options[@]}A"
   done
+
+  echo -ne "\033[$(( ${#options[@]} + 1 ))A"
+  echo -ne "\033[J"
 
 # Collect the selected frontend options
 	for ((i = 0; i < ${#options[@]}; i++)); do
@@ -70,6 +91,9 @@ multi_select(){
 	done
 
   eval "${selections_arr}=(\"\${selections[@]}\")"
+
+
+
 }
 
 kill_server() {
@@ -86,7 +110,6 @@ kill_server() {
 
 if [ "$1" = "start" ]; then
 
-    selected_frontends=()
     if command -v ruby >/dev/null 2>&1; then
       kill_server
       ruby /usr/share/simplydo/server.rb > /dev/null &
@@ -98,7 +121,6 @@ if [ "$1" = "start" ]; then
       else
           echo "Failed to start the server"
       fi
-
     else
         echo "Ruby not installed. Failed to start the server"
         echo "Exiting..."
@@ -109,10 +131,52 @@ elif [ "$1" = "stop" ]; then
     kill_server
 
 elif [ "$1" = "create" ] || [ "$1" = "c" ]; then
+
+
+
+  #SELECT FRONTEND TECH STACK
+  selected_frontends=()
   frontend_options=("Angular" "React" "Vue" "Flutter" "Express JS" "RubyOnRails")
   echo "Select frontend framework(s) for the project (use arrow keys to navigate, press space to select/deselect, and press enter to proceed):"
   multi_select "selected_frontends" "${frontend_options[@]}"
-  echo "Selected Frontend Frameworks: ${selected_frontends[@]}"
+
+  IFS=","
+  echo "Selected Frontend Frameworks:${YELLOW} ${selected_frontends[@]}${RESET}"
+  unset IFS
+
+
+  #SELECT BACKEND TECH STACK
+  selected_backends=()
+  backend_options=("Node JS" "Rails API" "Springboot")
+  echo "Select backend framework(s) for the project (use arrow keys to navigate, press space to select/deselect, and press enter to proceed):"
+  multi_select "selected_backends" "${backend_options[@]}"
+  IFS=","
+  echo "Selected Backend Frameworks:${YELLOW} ${selected_backends[@]}${RESET}"
+  unset IFS
+
+
+  #SELECT DATABASE TECH STACK
+  selected_databases=()
+  database_options=("MySQL" "Oracle" "MongoDB" "PostgreSQL")
+  echo "Select database framework(s) for the project (use arrow keys to navigate, press space to select/deselect, and press enter to proceed):"
+  multi_select "selected_databases" "${database_options[@]}"
+  IFS=","
+  echo "Selected Database Frameworks:${YELLOW} ${selected_databases[@]}${RESET}"
+  unset IFS
+
+
+
+  #SELECT OTHER TECH STACK
+  selected_additional_frameworks=()
+  additional_frameworks_options=("Google Cloud CLI" "Azure CLI" "Firebase")
+  echo "Select frontend framework(s) for the project (use arrow keys to navigate, press space to select/deselect, and press enter to proceed):"
+  multi_select "selected_additional_frameworks" "${additional_frameworks_options[@]}"
+  IFS=","
+  echo "Selected Additional Frameworks:${YELLOW} ${selected_additional_frameworks[@]}${RESET}"
+  unset IFS
+
+elif [ "$1" = "hello" ]; then
+  ruby /usr/share/simplydo/sayhello.rb > /dev/null &
 
 else
     echo "Invalid command. Usage: simplydo [start|stop|create]"

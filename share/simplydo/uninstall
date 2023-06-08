@@ -11,13 +11,20 @@ elif [[ "$platform" == "Darwin" ]]; then
   is_macos=true
 fi
 
+read -p "Are you sure you want to uninstall simplydo? (y/n): " answer
 
-if $is_linux; then
-  echo "Installing simplydo"
-  sudo wget -O /usr/bin/simplydo https://raw.githubusercontent.com/chanduollala/simplydo/main/simplydo
-  sudo chmod +x /usr/bin/simplydo
+if [[ $answer == "y" ]]; then
+  if $is_linux; then
+    echo "Uninstalling simplydo"
+    sudo wget -O /usr/bin/simplydo https://raw.githubusercontent.com/chanduollala/simplydo/main/simplydo
+    sudo chmod +x /usr/bin/simplydo
 
+  else
+    echo "platform not supported"
+  fi
 else
-  echo "platform not supported"
+  echo "Aborted."
 fi
+
+
 
