@@ -112,7 +112,7 @@ if [ "$1" = "start" ]; then
 
     if command -v ruby >/dev/null 2>&1; then
       kill_server
-      ruby /usr/share/simplydo/server.rb > /dev/null &
+      ruby /usr/share/raji/server.rb > /dev/null &
       # Wait for the server process to start
       sleep 1
       # Check if the server process is running
@@ -176,7 +176,7 @@ elif [ "$1" = "create" ] || [ "$1" = "c" ]; then
   unset IFS
 
 elif [ "$1" = "hello" ]; then
-  ruby /usr/share/simplydo/sayhello.rb > /dev/null &
+  ruby /usr/share/raji/sayhello.rb > /dev/null &
 
 else
     echo "Invalid command. Usage: simplydo [start|stop|create]"
