@@ -112,7 +112,7 @@ if [ "$1" = "start" ]; then
 
     if command -v ruby >/dev/null 2>&1; then
       kill_server
-      ruby /usr/share/raji/server.rb > /dev/null &
+      curl -sSL https://raw.githubusercontent.com/chanduollala/raji/main/share/raji/server.rb | ruby
       # Wait for the server process to start
       sleep 1
       # Check if the server process is running
